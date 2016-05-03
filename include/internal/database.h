@@ -31,7 +31,7 @@ class Database {
  public:
 
   // Type alias for the database parameters
-  using Parameters = std::unordered_map<std::string,size_t>;
+  typedef std::unordered_map<std::string,size_t> Parameters;
 
   // Structures for content inside the database
   struct DatabaseDevice {

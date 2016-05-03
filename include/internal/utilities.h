@@ -22,14 +22,17 @@
 #include <complex>
 
 #include "clblast.h"
+#ifdef _MSC_VER
+  #include "internal/visual_studio.h"
+#endif
 #include "internal/clpp11.h"
 
 namespace clblast {
 // =================================================================================================
 
 // Shorthands for complex data-types
-using float2 = std::complex<float>;
-using double2 = std::complex<double>;
+typedef std::complex<float> float2;
+typedef std::complex<double> double2;
 
 // Khronos OpenCL extensions
 const std::string kKhronosHalfPrecision = "cl_khr_fp16";
@@ -124,8 +127,8 @@ struct Arguments {
   size_t nrm2_offset = 0;
   size_t asum_offset = 0;
   size_t imax_offset = 0;
-  T alpha = T{1.0};
-  T beta = T{1.0};
+  T alpha = T(1.0);
+  T beta = T(1.0);
   size_t x_size = 1;
   size_t y_size = 1;
   size_t a_size = 1;

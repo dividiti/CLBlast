@@ -88,12 +88,12 @@ class Event {
   // http://stackoverflow.com/questions/26145603/clgeteventprofilinginfo-bug-in-macosx
   float GetElapsedTime() const {
     WaitForCompletion();
-    auto bytes = size_t{0};
+    auto bytes = size_t(0);
     clGetEventProfilingInfo(event_, CL_PROFILING_COMMAND_START, 0, nullptr, &bytes);
-    auto time_start = size_t{0};
+    auto time_start = size_t(0);
     clGetEventProfilingInfo(event_, CL_PROFILING_COMMAND_START, bytes, &time_start, nullptr);
     clGetEventProfilingInfo(event_, CL_PROFILING_COMMAND_END, 0, nullptr, &bytes);
-    auto time_end = size_t{0};
+    auto time_end = size_t(0);
     clGetEventProfilingInfo(event_, CL_PROFILING_COMMAND_END, bytes, &time_end, nullptr);
     return (time_end - time_start) * 1.0e-6f;
   }
@@ -106,7 +106,7 @@ class Event {
 };
 
 // Pointer to an OpenCL event
-using EventPointer = cl_event*;
+typedef cl_event* EventPointer;
 
 // =================================================================================================
 
@@ -119,7 +119,7 @@ class Platform {
 
   // Initializes the platform
   explicit Platform(const size_t platform_id) {
-    auto num_platforms = cl_uint{0};
+    auto num_platforms = cl_uint(0);
     CheckError(clGetPlatformIDs(0, nullptr, &num_platforms));
     if (num_platforms == 0) { Error("no platforms found"); }
     auto platforms = std::vector<cl_platform_id>(num_platforms);
@@ -130,7 +130,7 @@ class Platform {
 
   // Returns the number of devices on this platform
   size_t NumDevices() const {
-    auto result = cl_uint{0};
+    auto result = cl_uint(0);
     CheckError(clGetDeviceIDs(platform_, CL_DEVICE_TYPE_ALL, 0, nullptr, &result));
     return static_cast<size_t>(result);
   }
@@ -197,9 +197,9 @@ class Device {
     return (local_mem_usage <= LocalMemSize());
   }
   bool IsThreadConfigValid(const std::vector<size_t> &local) const {
-    auto local_size = size_t{1};
+    auto local_size = size_t(1);
     for (const auto &item: local) { local_size *= item; }
-    for (auto i=size_t{0}; i<local.size(); ++i) {
+    for (auto i=size_t(0); i<local.size(); ++i) {
       if (local[i] > MaxWorkItemSizes()[i]) { return false; }
     }
     if (local_size > MaxWorkGroupSize()) { return false; }
@@ -215,14 +215,14 @@ class Device {
   // Private helper functions
   template <typename T>
   T GetInfo(const cl_device_info info) const {
-    auto bytes = size_t{0};
+    auto bytes = size_t(0);
     CheckError(clGetDeviceInfo(device_, info, 0, nullptr, &bytes));
     auto result = T(0);
     CheckError(clGetDeviceInfo(device_, info, bytes, &result, nullptr));
     return result;
   }
   size_t GetInfo(const cl_device_info info) const {
-    auto bytes = size_t{0};
+    auto bytes = size_t(0);
     CheckError(clGetDeviceInfo(device_, info, 0, nullptr, &bytes));
     auto result = cl_uint(0);
     CheckError(clGetDeviceInfo(device_, info, bytes, &result, nullptr));
@@ -230,19 +230,19 @@ class Device {
   }
   template <typename T>
   std::vector<T> GetInfoVector(const cl_device_info info) const {
-    auto bytes = size_t{0};
+    auto bytes = size_t(0);
     CheckError(clGetDeviceInfo(device_, info, 0, nullptr, &bytes));
     auto result = std::vector<T>(bytes/sizeof(T));
     CheckError(clGetDeviceInfo(device_, info, bytes, result.data(), nullptr));
     return result;
   }
   std::string GetInfoString(const cl_device_info info) const {
-    auto bytes = size_t{0};
+    auto bytes = size_t(0);
     CheckError(clGetDeviceInfo(device_, info, 0, nullptr, &bytes));
-    auto result = std::string{};
+    auto result = std::string("");
     result.resize(bytes);
     CheckError(clGetDeviceInfo(device_, info, bytes, &result[0], nullptr));
-    return std::string{result.c_str()}; // Removes any trailing '\0'-characters
+    return std::string(result.c_str()); // Removes any trailing '\0'-characters
   }
 };
 
@@ -275,7 +275,7 @@ class Context {
 };
 
 // Pointer to an OpenCL context
-using ContextPointer = cl_context*;
+typedef cl_context* ContextPointer;
 
 // =================================================================================================
 
@@ -316,7 +316,7 @@ class Program {
 
   // Compiles the device program and returns whether or not there where any warnings/errors
   BuildStatus Build(const Device &device, std::vector<std::string> &options) {
-    auto options_string = std::accumulate(options.begin(), options.end(), std::string{" "});
+    auto options_string = std::accumulate(options.begin(), options.end(), std::string(" "));
     const cl_device_id dev = device();
     auto status = clBuildProgram(*program_, 1, &dev, options_string.c_str(), nullptr, nullptr);
     if (status == CL_BUILD_PROGRAM_FAILURE) {
@@ -333,10 +333,10 @@ class Program {
 
   // Retrieves the warning/error message from the compiler (if any)
   std::string GetBuildInfo(const Device &device) const {
-    auto bytes = size_t{0};
-    auto query = cl_program_build_info{CL_PROGRAM_BUILD_LOG};
+    auto bytes = size_t(0);
+    auto query = cl_program_build_info(CL_PROGRAM_BUILD_LOG);
     CheckError(clGetProgramBuildInfo(*program_, device(), query, 0, nullptr, &bytes));
-    auto result = std::string{};
+    auto result = std::string("");
     result.resize(bytes);
     CheckError(clGetProgramBuildInfo(*program_, device(), query, bytes, &result[0], nullptr));
     return result;
@@ -344,9 +344,9 @@ class Program {
 
   // Retrieves a binary or an intermediate representation of the compiled program
   std::string GetIR() const {
-    auto bytes = size_t{0};
+    auto bytes = size_t(0);
     CheckError(clGetProgramInfo(*program_, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &bytes, nullptr));
-    auto result = std::string{};
+    auto result = std::string("");
     result.resize(bytes);
     auto result_ptr = result.data();
     CheckError(clGetProgramInfo(*program_, CL_PROGRAM_BINARIES, sizeof(char*), &result_ptr, nullptr));
@@ -398,14 +398,14 @@ class Queue {
 
   // Retrieves the corresponding context or device
   Context GetContext() const {
-    auto bytes = size_t{0};
+    auto bytes = size_t(0);
     CheckError(clGetCommandQueueInfo(*queue_, CL_QUEUE_CONTEXT, 0, nullptr, &bytes));
     cl_context result;
     CheckError(clGetCommandQueueInfo(*queue_, CL_QUEUE_CONTEXT, bytes, &result, nullptr));
     return Context(result);
   }
   Device GetDevice() const {
-    auto bytes = size_t{0};
+    auto bytes = size_t(0);
     CheckError(clGetCommandQueueInfo(*queue_, CL_QUEUE_DEVICE, 0, nullptr, &bytes));
     cl_device_id result;
     CheckError(clGetCommandQueueInfo(*queue_, CL_QUEUE_DEVICE, bytes, &result, nullptr));
@@ -569,9 +569,9 @@ class Buffer {
 
   // Retrieves the actual allocated size in bytes
   size_t GetSize() const {
-    auto bytes = size_t{0};
+    auto bytes = size_t(0);
     CheckError(clGetMemObjectInfo(*buffer_, CL_MEM_SIZE, 0, nullptr, &bytes));
-    auto result = size_t{0};
+    auto result = size_t(0);
     CheckError(clGetMemObjectInfo(*buffer_, CL_MEM_SIZE, bytes, &result, nullptr));
     return result;
   }
@@ -615,17 +615,19 @@ class Kernel {
 
   // Sets all arguments in one go using parameter packs. Note that this overwrites previously set
   // arguments using 'SetArgument' or 'SetArguments'.
-  template <typename... Args>
-  void SetArguments(Args&... args) {
-    SetArgumentsRecursive(0, args...);
-  }
+  #ifndef _MSC_VER
+    template <typename... Args>
+    void SetArguments(Args&... args) {
+      SetArgumentsRecursive(0, args...);
+    }
+  #endif
 
   // Retrieves the amount of local memory used per work-group for this kernel
   size_t LocalMemUsage(const Device &device) const {
-    auto bytes = size_t{0};
-    auto query = cl_kernel_work_group_info{CL_KERNEL_LOCAL_MEM_SIZE};
+    auto bytes = size_t(0);
+    auto query = cl_kernel_work_group_info(CL_KERNEL_LOCAL_MEM_SIZE);
     CheckError(clGetKernelWorkGroupInfo(*kernel_, device(), query, 0, nullptr, &bytes));
-    auto result = size_t{0};
+    auto result = size_t(0);
     CheckError(clGetKernelWorkGroupInfo(*kernel_, device(), query, bytes, &result, nullptr));
     return result;
   }
@@ -671,15 +673,17 @@ class Kernel {
   std::shared_ptr<cl_kernel> kernel_;
 
   // Internal implementation for the recursive SetArguments function.
-  template <typename T>
-  void SetArgumentsRecursive(const size_t index, T &first) {
-    SetArgument(index, first);
-  }
-  template <typename T, typename... Args>
-  void SetArgumentsRecursive(const size_t index, T &first, Args&... args) {
-    SetArgument(index, first);
-    SetArgumentsRecursive(index+1, args...);
-  }
+  #ifndef _MSC_VER
+    template <typename T>
+    void SetArgumentsRecursive(const size_t index, T &first) {
+      SetArgument(index, first);
+    }
+    template <typename T, typename... Args>
+    void SetArgumentsRecursive(const size_t index, T &first, Args&... args) {
+      SetArgument(index, first);
+      SetArgumentsRecursive(index+1, args...);
+    }
+  #endif
 };
 
 // =================================================================================================
