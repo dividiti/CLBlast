@@ -44,6 +44,29 @@ Xgemm<T>::Xgemm(Queue &queue, EventPointer event, const std::string &name):
     }) {
 }
 
+template <typename T>
+Xgemm<T>::Xgemm(Queue &queue, EventPointer event, const std::vector<std::string> &routines,
+  const std::string &name):
+    Routine(queue, event, name,routines,
+            PrecisionValue<T>(), {}, {
+    #include "../../kernels/level3/level3.opencl"
+    #include "../../kernels/level3/copy_fast.opencl"
+    #include "../../kernels/level3/copy_pad.opencl"
+    #include "../../kernels/level3/transpose_fast.opencl"
+    #include "../../kernels/level3/transpose_pad.opencl"
+    #include "../../kernels/level3/convert_symmetric.opencl"
+    #include "../../kernels/level3/convert_triangular.opencl"
+    #include "../../kernels/level3/convert_hermitian.opencl"
+    , // separated in multiple parts to prevent C1091 in MSVC 2013
+    #include "../../kernels/level3/xgemm_direct_part1.opencl"
+    #include "../../kernels/level3/xgemm_direct_part2.opencl"
+    #include "../../kernels/level3/xgemm_direct_part3.opencl"
+    , // separated in multiple parts to prevent C1091 in MSVC 2013
+    #include "../../kernels/level3/xgemm_part1.opencl"
+    #include "../../kernels/level3/xgemm_part2.opencl"
+    #include "../../kernels/level3/xgemm_part3.opencl"
+    }) {
+}
 // =================================================================================================
 
 // The main routine
