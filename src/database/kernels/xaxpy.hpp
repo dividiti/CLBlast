@@ -19,14 +19,14 @@ const Database::DatabaseEntry XaxpyHalf = {
   "Xaxpy", Precision::kHalf, {
     { // AMD GPUs
       kDeviceTypeGPU, "AMD", {
-        { "Ellesmere",                                       { {"VW",4}, {"WGS",128}, {"WPT",4} } },
+        // { "Ellesmere",                                       { {"VW",4}, {"WGS",128}, {"WPT",4} } },
         { "default",                                         { {"VW",4}, {"WGS",128}, {"WPT",4} } },
       }
     },
     { // Intel GPUs
       kDeviceTypeGPU, "Intel", {
-        { "Intel(R) HD Graphics 5500 BroadWell U-Processor GT2", { {"VW",1}, {"WGS",64}, {"WPT",1} } },
-        { "Intel(R) HD Graphics Skylake ULT GT2",            { {"VW",8}, {"WGS",64}, {"WPT",1} } },
+        // { "Intel(R) HD Graphics 5500 BroadWell U-Processor GT2", { {"VW",1}, {"WGS",64}, {"WPT",1} } },
+        // { "Intel(R) HD Graphics Skylake ULT GT2",            { {"VW",8}, {"WGS",64}, {"WPT",1} } },
         { "default",                                         { {"VW",8}, {"WGS",64}, {"WPT",1} } },
       }
     },
@@ -44,16 +44,16 @@ const Database::DatabaseEntry XaxpySingle = {
   "Xaxpy", Precision::kSingle, {
     { // AMD GPUs
       kDeviceTypeGPU, "AMD", {
-        { "AMD Radeon R9 M370X Compute Engine",              { {"VW",1}, {"WGS",128}, {"WPT",1} } },
-        { "ATI Radeon HD 6750M",                             { {"VW",1}, {"WGS",256}, {"WPT",2} } },
-        { "Ellesmere",                                       { {"VW",1}, {"WGS",64}, {"WPT",4} } },
-        { "Fiji",                                            { {"VW",4}, {"WGS",64}, {"WPT",1} } },
-        { "Hawaii",                                          { {"VW",2}, {"WGS",64}, {"WPT",2} } },
-        { "Oland",                                           { {"VW",1}, {"WGS",128}, {"WPT",1} } },
-        { "Pitcairn",                                        { {"VW",2}, {"WGS",128}, {"WPT",1} } },
-        { "Tahiti",                                          { {"VW",2}, {"WGS",64}, {"WPT",1} } },
-        { "Tonga",                                           { {"VW",1}, {"WGS",256}, {"WPT",8} } },
-        { "Turks",                                           { {"VW",2}, {"WGS",256}, {"WPT",1} } },
+        // { "AMD Radeon R9 M370X Compute Engine",              { {"VW",1}, {"WGS",128}, {"WPT",1} } },
+        // { "ATI Radeon HD 6750M",                             { {"VW",1}, {"WGS",256}, {"WPT",2} } },
+        // { "Ellesmere",                                       { {"VW",1}, {"WGS",64}, {"WPT",4} } },
+        // { "Fiji",                                            { {"VW",4}, {"WGS",64}, {"WPT",1} } },
+        // { "Hawaii",                                          { {"VW",2}, {"WGS",64}, {"WPT",2} } },
+        // { "Oland",                                           { {"VW",1}, {"WGS",128}, {"WPT",1} } },
+        // { "Pitcairn",                                        { {"VW",2}, {"WGS",128}, {"WPT",1} } },
+        // { "Tahiti",                                          { {"VW",2}, {"WGS",64}, {"WPT",1} } },
+        // { "Tonga",                                           { {"VW",1}, {"WGS",256}, {"WPT",8} } },
+        // { "Turks",                                           { {"VW",2}, {"WGS",256}, {"WPT",1} } },
         { "default",                                         { {"VW",2}, {"WGS",256}, {"WPT",1} } },
       }
     },
@@ -65,50 +65,50 @@ const Database::DatabaseEntry XaxpySingle = {
     },
     { // Intel CPUs
       kDeviceTypeCPU, "Intel", {
-        { "Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz",       { {"VW",8}, {"WGS",512}, {"WPT",1} } },
-        { "Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz",        { {"VW",1}, {"WGS",512}, {"WPT",1} } },
-        { "Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz",         { {"VW",4}, {"WGS",256}, {"WPT",1} } },
-        { "Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz",        { {"VW",2}, {"WGS",1024}, {"WPT",1} } },
-        { "Intel(R) Core(TM) i7-5930K CPU @ 3.50GHz",        { {"VW",1}, {"WGS",128}, {"WPT",1} } },
+        // { "Intel(R) Core(TM) i7-2670QM CPU @ 2.20GHz",       { {"VW",8}, {"WGS",512}, {"WPT",1} } },
+        // { "Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz",        { {"VW",1}, {"WGS",512}, {"WPT",1} } },
+        // { "Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz",         { {"VW",4}, {"WGS",256}, {"WPT",1} } },
+        // { "Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz",        { {"VW",2}, {"WGS",1024}, {"WPT",1} } },
+        // { "Intel(R) Core(TM) i7-5930K CPU @ 3.50GHz",        { {"VW",1}, {"WGS",128}, {"WPT",1} } },
         { "default",                                         { {"VW",8}, {"WGS",512}, {"WPT",1} } },
       }
     },
     { // Intel GPUs
       kDeviceTypeGPU, "Intel", {
-        { "Intel(R) HD Graphics 530",                        { {"VW",1}, {"WGS",128}, {"WPT",1} } },
-        { "Intel(R) HD Graphics 5500 BroadWell U-Processor GT2", { {"VW",1}, {"WGS",256}, {"WPT",1} } },
-        { "Intel(R) HD Graphics Haswell Ultrabook GT2 Mobile", { {"VW",1}, {"WGS",64}, {"WPT",1} } },
-        { "Intel(R) HD Graphics IvyBridge M GT2",            { {"VW",1}, {"WGS",64}, {"WPT",1} } },
-        { "Intel(R) HD Graphics Skylake ULT GT2",            { {"VW",8}, {"WGS",512}, {"WPT",1} } },
-        { "Iris",                                            { {"VW",1}, {"WGS",64}, {"WPT",1} } },
-        { "Iris Pro",                                        { {"VW",1}, {"WGS",128}, {"WPT",2} } },
+        // { "Intel(R) HD Graphics 530",                        { {"VW",1}, {"WGS",128}, {"WPT",1} } },
+        // { "Intel(R) HD Graphics 5500 BroadWell U-Processor GT2", { {"VW",1}, {"WGS",256}, {"WPT",1} } },
+        // { "Intel(R) HD Graphics Haswell Ultrabook GT2 Mobile", { {"VW",1}, {"WGS",64}, {"WPT",1} } },
+        // { "Intel(R) HD Graphics IvyBridge M GT2",            { {"VW",1}, {"WGS",64}, {"WPT",1} } },
+        // { "Intel(R) HD Graphics Skylake ULT GT2",            { {"VW",8}, {"WGS",512}, {"WPT",1} } },
+        // { "Iris",                                            { {"VW",1}, {"WGS",64}, {"WPT",1} } },
+        // { "Iris Pro",                                        { {"VW",1}, {"WGS",128}, {"WPT",2} } },
         { "default",                                         { {"VW",4}, {"WGS",256}, {"WPT",1} } },
       }
     },
     { // Intel accelerators
       kDeviceTypeAccelerator, "Intel", {
-        { "Intel(R) Many Integrated Core Acceleration Card", { {"VW",2}, {"WGS",1024}, {"WPT",2} } },
+        // { "Intel(R) Many Integrated Core Acceleration Card", { {"VW",2}, {"WGS",1024}, {"WPT",2} } },
         { "default",                                         { {"VW",2}, {"WGS",1024}, {"WPT",2} } },
       }
     },
     { // NVIDIA GPUs
       kDeviceTypeGPU, "NVIDIA", {
-        { "GRID K520",                                       { {"VW",2}, {"WGS",64}, {"WPT",1} } },
-        { "GeForce GT 650M",                                 { {"VW",2}, {"WGS",1024}, {"WPT",1} } },
-        { "GeForce GTX 1070",                                { {"VW",1}, {"WGS",64}, {"WPT",4} } },
+        // { "GRID K520",                                       { {"VW",2}, {"WGS",64}, {"WPT",1} } },
+        // { "GeForce GT 650M",                                 { {"VW",2}, {"WGS",1024}, {"WPT",1} } },
+        // { "GeForce GTX 1070",                                { {"VW",1}, {"WGS",64}, {"WPT",4} } },
         { "GeForce GTX 1080",                                { {"VW",1}, {"WGS",256}, {"WPT",1} } },
-        { "GeForce GTX 480",                                 { {"VW",2}, {"WGS",128}, {"WPT",1} } },
-        { "GeForce GTX 670",                                 { {"VW",2}, {"WGS",64}, {"WPT",1} } },
-        { "GeForce GTX 680",                                 { {"VW",1}, {"WGS",128}, {"WPT",1} } },
-        { "GeForce GTX 750",                                 { {"VW",1}, {"WGS",64}, {"WPT",1} } },
-        { "GeForce GTX 750 Ti",                              { {"VW",2}, {"WGS",64}, {"WPT",1} } },
-        { "GeForce GTX 980",                                 { {"VW",1}, {"WGS",1024}, {"WPT",1} } },
-        { "GeForce GTX TITAN",                               { {"VW",4}, {"WGS",256}, {"WPT",1} } },
-        { "GeForce GTX TITAN Black",                         { {"VW",4}, {"WGS",128}, {"WPT",4} } },
-        { "GeForce GTX TITAN X",                             { {"VW",1}, {"WGS",64}, {"WPT",1} } },
-        { "TITAN X (Pascal)",                                { {"VW",4}, {"WGS",128}, {"WPT",1} } },
-        { "Tesla K20m",                                      { {"VW",4}, {"WGS",128}, {"WPT",1} } },
-        { "Tesla K40m",                                      { {"VW",4}, {"WGS",128}, {"WPT",1} } },
+        // { "GeForce GTX 480",                                 { {"VW",2}, {"WGS",128}, {"WPT",1} } },
+        // { "GeForce GTX 670",                                 { {"VW",2}, {"WGS",64}, {"WPT",1} } },
+        // { "GeForce GTX 680",                                 { {"VW",1}, {"WGS",128}, {"WPT",1} } },
+        // { "GeForce GTX 750",                                 { {"VW",1}, {"WGS",64}, {"WPT",1} } },
+        // { "GeForce GTX 750 Ti",                              { {"VW",2}, {"WGS",64}, {"WPT",1} } },
+        // { "GeForce GTX 980",                                 { {"VW",1}, {"WGS",1024}, {"WPT",1} } },
+        // { "GeForce GTX TITAN",                               { {"VW",4}, {"WGS",256}, {"WPT",1} } },
+        // { "GeForce GTX TITAN Black",                         { {"VW",4}, {"WGS",128}, {"WPT",4} } },
+        // { "GeForce GTX TITAN X",                             { {"VW",1}, {"WGS",64}, {"WPT",1} } },
+        // { "TITAN X (Pascal)",                                { {"VW",4}, {"WGS",128}, {"WPT",1} } },
+        // { "Tesla K20m",                                      { {"VW",4}, {"WGS",128}, {"WPT",1} } },
+        // { "Tesla K40m",                                      { {"VW",4}, {"WGS",128}, {"WPT",1} } },
         { "default",                                         { {"VW",4}, {"WGS",1024}, {"WPT",1} } },
       }
     },
