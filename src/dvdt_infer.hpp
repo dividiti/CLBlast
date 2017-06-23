@@ -5,7 +5,7 @@
 
 #include "clblast.h"
 
-namespace clbast{
+namespace clblast{
 
 
 	 template <typename T> 
