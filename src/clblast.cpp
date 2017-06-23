@@ -1699,20 +1699,49 @@ template StatusCode PUBLIC_API Spr2<half>(const Layout, const Triangle,
 // BLAS level-3 (matrix-matrix) routines
 // =================================================================================================
 template <typename T> 
-std::vector<std::string> GetConf(const Layout layout, const Transpose a_transpose, 
+const std::vector<std::string> GetConf(const Layout layout, const Transpose a_transpose, 
                 const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
-                const T alpha, const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
-                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld,
-                const T beta, cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
-                cl_command_queue* queue, cl_event* event) {
+                const T alpha, const size_t a_offset, const size_t a_ld,
+                const size_t b_offset, const size_t b_ld,
+                const T beta, const size_t c_offset, const size_t c_ld){
 
   std::vector<std::string> routines_vett = {"Copy","Pad","Transpose",
                   "Padtranspose","KernelSelection"};
 
   routines_vett.push_back("XgemmDirect");
   routines_vett.push_back("Xgemm"); 
+  return routines_vett;
 }
 
+template const std::vector<std::string> GetConf<float>(const Layout layout, const Transpose a_transpose, 
+                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
+                const float alpha, const size_t a_offset, const size_t a_ld,
+                const size_t b_offset, const size_t b_ld,
+                const float beta, const size_t c_offset, const size_t c_ld);
+
+template const std::vector<std::string> GetConf<double>(const Layout layout, const Transpose a_transpose, 
+                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
+                const double alpha, const size_t a_offset, const size_t a_ld,
+                const size_t b_offset, const size_t b_ld,
+                const double beta, const size_t c_offset, const size_t c_ld);
+
+template const std::vector<std::string> GetConf<float2>(const Layout layout, const Transpose a_transpose, 
+                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
+                const float2 alpha, const size_t a_offset, const size_t a_ld,
+                const size_t b_offset, const size_t b_ld,
+                const float2 beta, const size_t c_offset, const size_t c_ld);
+
+template const std::vector<std::string> GetConf<double2>(const Layout layout, const Transpose a_transpose, 
+                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
+                const double2 alpha, const size_t a_offset, const size_t a_ld,
+                const size_t b_offset, const size_t b_ld,
+                const double2 beta, const size_t c_offset, const size_t c_l);
+
+template const std::vector<std::string> GetConf<half>(const Layout layout, const Transpose a_transpose, 
+                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
+                const half alpha, const size_t a_offset, const size_t a_ld,
+                const size_t b_offset, const size_t b_ld,
+                const half beta, const size_t c_offset, const size_t c_ld); 
 // General matrix-matrix multiplication: SGEMM/DGEMM/CGEMM/ZGEMM/HGEMM
 template <typename T>
 StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
@@ -1725,7 +1754,14 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
                 cl_command_queue* queue, cl_event* event) {
   try {
     auto queue_cpp = Queue(*queue);
-    auto routine = Xgemm<T>(queue_cpp, event);
+    const std::vector<std::string> routines_vett = 
+	GetConf<T>(layout, a_transpose, b_transpose,
+                   m, n,k, 
+                   alpha, a_offset, a_ld,
+                   b_offset, b_ld, beta,
+                   c_offset, c_ld);
+
+    auto routine = Xgemm<T>(queue_cpp, event, routines_vett);
     routine.DoGemm(layout, a_transpose, b_transpose,
                    m, n, k,
                    alpha,
