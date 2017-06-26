@@ -144,6 +144,82 @@ void Xgemm<T>::DoGemm(const Layout layout,
   }
 }
 
+// The main routine
+template <typename T>
+void Xgemm<T>::DoGemm(const Layout layout,
+                      const Transpose a_transpose, const Transpose b_transpose,
+                      const size_t m, const size_t n, const size_t k,
+                      const T alpha,
+                      const Buffer<T> &a_buffer, const size_t a_offset, const size_t a_ld,
+                      const Buffer<T> &b_buffer, const size_t b_offset, const size_t b_ld,
+                      const T beta,
+                      const Buffer<T> &c_buffer, const size_t c_offset, const size_t c_ld, int *flag) {
+
+  // Makes sure all dimensions are larger than zero
+  if ((m == 0) || (n == 0) || (k == 0)) { throw BLASError(StatusCode::kInvalidDimension); }
+
+  // Computes whether or not the matrices are transposed in memory. This is based on their layout
+  // (row or column-major) and whether or not they are requested to be pre-transposed. Note
+  // that the Xgemm kernel expects either matrices A and C (in case of row-major) or B (in case of
+  // col-major) to be transformed, so transposing requirements are not the same as whether or not
+  // the matrix is actually transposed in memory.
+  const auto a_rotated = (layout == Layout::kColMajor && a_transpose != Transpose::kNo) ||
+                         (layout == Layout::kRowMajor && a_transpose == Transpose::kNo);
+  const auto b_rotated = (layout == Layout::kColMajor && b_transpose != Transpose::kNo) ||
+                         (layout == Layout::kRowMajor && b_transpose == Transpose::kNo);
+  const auto c_rotated = (layout == Layout::kRowMajor);
+  static const auto a_want_rotated = false;
+  static const auto b_want_rotated = true;
+  static const auto c_want_rotated = false;
+  const auto a_do_transpose = a_rotated != a_want_rotated;
+  const auto b_do_transpose = b_rotated != b_want_rotated;
+  const auto c_do_transpose = c_rotated != c_want_rotated;
+
+  // In case of complex data-types, the transpose can also become a conjugate transpose
+  const auto a_conjugate = (a_transpose == Transpose::kConjugate);
+  const auto b_conjugate = (b_transpose == Transpose::kConjugate);
+
+  // Computes the first and second dimensions of the 3 matrices taking into account whether the
+  // matrices are rotated or not
+  const auto a_one = (a_rotated) ? k : m;
+  const auto a_two = (a_rotated) ? m : k;
+  const auto b_one = (b_rotated) ? n : k;
+  const auto b_two = (b_rotated) ? k : n;
+  const auto c_one = (c_rotated) ? n : m;
+  const auto c_two = (c_rotated) ? m : n;
+
+  // Tests three matrices (A, B, C) for validity, first from a perspective of the OpenCL buffers and
+  // their sizes, and then from a perspective of parameter values (e.g. m, n, k). Tests whether the
+  // OpenCL buffers are valid and non-zero and whether the OpenCL buffers have sufficient storage
+  // space. Also tests that the leading dimensions of:
+  //    matrix A cannot be less than K when rotated, or less than M when not-rotated
+  //    matrix B cannot be less than N when rotated, or less than K when not-rotated
+  //    matrix C cannot be less than N when rotated, or less than M when not-rotated
+  TestMatrixA(a_one, a_two, a_buffer, a_offset, a_ld);
+  TestMatrixB(b_one, b_two, b_buffer, b_offset, b_ld);
+  TestMatrixC(c_one, c_two, c_buffer, c_offset, c_ld);
+
+  // Selects which version of GEMM to run 
+  const auto m_n_k = static_cast<unsigned long>(m) * static_cast<unsigned long>(n) * static_cast<unsigned long>(k);
+  const auto do_gemm_direct = (m_n_k < static_cast<unsigned long>(db_["XGEMM_MIN_INDIRECT_SIZE"]));
+  if (*flag == 1) { // for small sizes (single kernel)
+    GemmDirect(m, n, k, alpha,
+               a_buffer, a_offset, a_ld, b_buffer, b_offset, b_ld, beta,
+               c_buffer, c_offset, c_ld,
+               a_do_transpose, b_do_transpose, c_do_transpose, a_conjugate, b_conjugate);
+  }
+  else { // for larger sizes (pre/post-processing plus a very fast kernel)
+    GemmIndirect(m, n, k, alpha,
+                 a_buffer, a_offset, a_ld, b_buffer, b_offset, b_ld, beta,
+                 c_buffer, c_offset, c_ld,
+                 a_do_transpose, b_do_transpose, c_do_transpose, a_conjugate, b_conjugate,
+                 a_one, a_two, a_want_rotated,
+                 b_one, b_two, b_want_rotated,
+                 c_one, c_two, c_want_rotated);
+  }
+}
+
+
 // =================================================================================================
 
 // The indirect version of GEMM. This uses the faster but non-general kernel. It has specific
