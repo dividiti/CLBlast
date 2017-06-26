@@ -153,7 +153,7 @@ void Xgemm<T>::DoGemm(const Layout layout,
                       const Buffer<T> &a_buffer, const size_t a_offset, const size_t a_ld,
                       const Buffer<T> &b_buffer, const size_t b_offset, const size_t b_ld,
                       const T beta,
-                      const Buffer<T> &c_buffer, const size_t c_offset, const size_t c_ld, int *flag) {
+                      const Buffer<T> &c_buffer, const size_t c_offset, const size_t c_ld, int flag) {
 
   // Makes sure all dimensions are larger than zero
   if ((m == 0) || (n == 0) || (k == 0)) { throw BLASError(StatusCode::kInvalidDimension); }
@@ -202,7 +202,7 @@ void Xgemm<T>::DoGemm(const Layout layout,
   // Selects which version of GEMM to run 
   const auto m_n_k = static_cast<unsigned long>(m) * static_cast<unsigned long>(n) * static_cast<unsigned long>(k);
   const auto do_gemm_direct = (m_n_k < static_cast<unsigned long>(db_["XGEMM_MIN_INDIRECT_SIZE"]));
-  if (*flag == 1) { // for small sizes (single kernel)
+  if (flag == 1) { // for small sizes (single kernel)
     GemmDirect(m, n, k, alpha,
                a_buffer, a_offset, a_ld, b_buffer, b_offset, b_ld, beta,
                c_buffer, c_offset, c_ld,
