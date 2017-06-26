@@ -1713,7 +1713,7 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
                 cl_command_queue* queue, cl_event* event) {
   try {
     auto queue_cpp = Queue(*queue);
-    int *flag = -1;
+    int flag = -1;
     const std::vector<std::string> routines_vett = 
 	GetConf<T>(layout, a_transpose, b_transpose,
                    m, n,k, 
