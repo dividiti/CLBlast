@@ -20,7 +20,7 @@ namespace clblast{
 
       routines_vett.push_back("XgemmDirect");
       routines_vett.push_back("Xgemm"); 
-      flag=-1;
+      *flag=-1;
       return routines_vett;
     }
 

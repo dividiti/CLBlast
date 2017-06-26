@@ -1729,7 +1729,7 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
                    Buffer<T>(a_buffer), a_offset, a_ld,
                    Buffer<T>(b_buffer), b_offset, b_ld,
                    beta,
-                   Buffer<T>(c_buffer), c_offset, c_ld;
+                   Buffer<T>(c_buffer), c_offset, c_ld);
     else
       routine.DoGemm(layout, a_transpose, b_transpose,
                    m, n, k,
