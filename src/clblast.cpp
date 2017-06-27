@@ -1722,6 +1722,7 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
                    c_offset, c_ld, &flag);
 
     auto routine = Xgemm<T>(queue_cpp, event, routines_vett);
+    fprintf(stderr, "FLAG %d\n",flag );
     if(flag == -1)
     routine.DoGemm(layout, a_transpose, b_transpose,
                    m, n, k,
