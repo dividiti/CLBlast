@@ -134,7 +134,7 @@ namespace clblast{
                 cl_mem c_buffer, const size_t c_offset, const size_t c_ld, const int len, 
                 const std::vector<std::string> v);
 
-            template StatusCode PUBLIC_API testConf<half>(cconst Layout layout, const Transpose a_transpose, const Transpose b_transpose,
+            template StatusCode PUBLIC_API testConf<half>(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
                 const size_t m, const size_t n, const size_t k,
                 const half alpha,
                 const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
