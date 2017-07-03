@@ -74,7 +74,7 @@ namespace clblast{
             try {
                 auto queue_plain = queue();
                 auto event = cl_event{};
-                auto queue_cpp = Queue(*queue);
+                auto queue_cpp = Queue(queue);
                 int flag = -1;
                 const std::vector<std::string> routines_vett = 
                 GetConf<T>(layout, a_transpose, b_transpose,
