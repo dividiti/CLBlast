@@ -55,15 +55,15 @@ namespace clblast{
                 const half beta, const size_t c_offset, const size_t c_ld, int * flag); 
 
 
-    template <typename T> void testConf(const Layout layout, const Transpose a_transpose, 
+    template <typename T> StatusCode PUBLIC_API testConf(const Layout layout, const Transpose a_transpose, 
                 const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                 const half alpha, const size_t a_offset, const size_t a_ld,
                 const size_t b_offset, const size_t b_ld,
-                const half beta, const size_t c_offset, const size_t c_ld, const len, 
+                const half beta, const size_t c_offset, const size_t c_ld, const int len, 
                 const std::vector<std::string> v){
         
-        auto platform = Platform(size{0});
-        auto device = Device(platform, size{0});
+        auto platform = Platform(size_t{0});
+        auto device = Device(platform, size_t{0});
         auto context = Context(device);
         auto queue = Queue(context, device);
         for(auto i = 0; i < len ; i++)
@@ -97,39 +97,39 @@ namespace clblast{
         
         }
       }
-        template void testConf<float>(const Layout layout, const Transpose a_transpose, 
+        template StatusCode PUBLIC_API testConf<float>(const Layout layout, const Transpose a_transpose, 
                 const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                 const float alpha, const size_t a_offset, const size_t a_ld,
                 const size_t b_offset, const size_t b_ld,
-                const float beta, const size_t c_offset, const size_t c_ld, const len, 
+                const float beta, const size_t c_offset, const size_t c_ld, const int len, 
                 const std::vector<std::string> v);
 
-         template void testConf<double>(const Layout layout, const Transpose a_transpose, 
+         template StatusCode PUBLIC_API testConf<double>(const Layout layout, const Transpose a_transpose, 
                 const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                 const double alpha, const size_t a_offset, const size_t a_ld,
                 const size_t b_offset, const size_t b_ld,
-                const double beta, const size_t c_offset, const size_t c_ld, const len, 
+                const double beta, const size_t c_offset, const size_t c_ld, const int len, 
                 const std::vector<std::string> v);
 
-          template void testConf<float2>(const Layout layout, const Transpose a_transpose, 
+          template StatusCode PUBLIC_API testConf<float2>(const Layout layout, const Transpose a_transpose, 
                 const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                 const float2 alpha, const size_t a_offset, const size_t a_ld,
                 const size_t b_offset, const size_t b_ld,
-                const float2 beta, const size_t c_offset, const size_t c_ld, const len, 
+                const float2 beta, const size_t c_offset, const size_t c_ld, const int len, 
                 const std::vector<std::string> v);
 
-           template void testConf<double2>(const Layout layout, const Transpose a_transpose, 
+           template StatusCode PUBLIC_API testConf<double2>(const Layout layout, const Transpose a_transpose, 
                 const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                 const double2 alpha, const size_t a_offset, const size_t a_ld,
                 const size_t b_offset, const size_t b_ld,
-                const double2 beta, const size_t c_offset, const size_t c_ld, const len, 
+                const double2 beta, const size_t c_offset, const size_t c_ld, const int len, 
                 const std::vector<std::string> v);
 
-            template void testConf<half>(const Layout layout, const Transpose a_transpose, 
+            template StatusCode PUBLIC_API testConf<half>(const Layout layout, const Transpose a_transpose, 
                 const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                 const half alpha, const size_t a_offset, const size_t a_ld,
                 const size_t b_offset, const size_t b_ld,
-                const half beta, const size_t c_offset, const size_t c_ld, const len, 
+                const half beta, const size_t c_offset, const size_t c_ld, const int len, 
                 const std::vector<std::string> v);
 }
 
