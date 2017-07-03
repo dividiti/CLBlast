@@ -55,7 +55,7 @@ namespace clblast{
                 const half beta, const size_t c_offset, const size_t c_ld, int * flag); 
 
 
-    template <typename T> void testConf<T>(const Layout layout, const Transpose a_transpose, 
+    template <typename T> void testConf(const Layout layout, const Transpose a_transpose, 
                 const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                 const half alpha, const size_t a_offset, const size_t a_ld,
                 const size_t b_offset, const size_t b_ld,
@@ -96,7 +96,7 @@ namespace clblast{
               } catch (...) { return DispatchException(); }
         
         }
-
+      }
         template void testConf<float>(const Layout layout, const Transpose a_transpose, 
                 const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                 const float alpha, const size_t a_offset, const size_t a_ld,
