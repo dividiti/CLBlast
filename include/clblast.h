@@ -511,6 +511,15 @@ StatusCode Spr2(const Layout layout, const Triangle triangle,
 // BLAS level-3 (matrix-matrix) routines
 // =================================================================================================
 
+template <typename T>
+StatusCode TestGemm(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
+                const size_t m, const size_t n, const size_t k,
+                const T alpha,
+                const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,   
+                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld, 
+                const T beta, 
+                cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
+                cl_command_queue* queue, cl_event* event = nullptr);
 // General matrix-matrix multiplication: SGEMM/DGEMM/CGEMM/ZGEMM/HGEMM
 template <typename T>
 StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,

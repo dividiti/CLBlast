@@ -54,6 +54,34 @@ namespace clblast{
                 const size_t b_offset, const size_t b_ld,
                 const half beta, const size_t c_offset, const size_t c_ld, int * flag); 
 
+   const std::vector<std::string> updateRoutinesVett(std::string s, int * flag)
+  { 
+           std::vector<std::string> routines_vett = {"Copy","Pad","Transpose",
+                      "Padtranspose","KernelSelection"};
+    
+	 routines_vett.push_back(s);
+         if( 0 == s.compare("Xgemm"))
+         {
+		 *flag =0;
+	}
+        else
+	{
+		 *flag=1; 
+	}
+         return routines_vett;	
+   }
+   
+   const std::vector<std::string> getRoutinesSet()
+   {
+	//std::vector<std::string> routines_vett = {"Xgemm"};
+	//std::vector<std::string> routines_vett = {"XgemmDirect"};
+	std::vector<std::string> routines_vett = {"Xgemm","XgemmDirect"};
+        
+        return routines_vett;
+
+   }
+
+
     // template <typename T> StatusCode PUBLIC_API testConf(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
     //             const size_t m, const size_t n, const size_t k,
     //             const T alpha,
