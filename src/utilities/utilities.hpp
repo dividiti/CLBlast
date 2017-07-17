@@ -284,6 +284,8 @@ template <typename T>
 T GetArgument(const std::vector<std::string> &arguments, std::string &help,
               const std::string &option, const T default_value);
 
+std::string GetStringArgument(const std::vector<std::string>&, std::string&, const std::string&, const std::string&);
+
 // Returns the precision only
 Precision GetPrecision(const std::vector<std::string> &arguments,
                        const Precision default_precision = Precision::kSingle);

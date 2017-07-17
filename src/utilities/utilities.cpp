@@ -286,6 +286,26 @@ template Triangle GetArgument<Triangle>(const std::vector<std::string>&, std::st
 template Diagonal GetArgument<Diagonal>(const std::vector<std::string>&, std::string&, const std::string&, const Diagonal);
 template Precision GetArgument<Precision>(const std::vector<std::string>&, std::string&, const std::string&, const Precision);
 
+
+std::string GetStringArgument(const std::vector<std::string>&arguments, std::string&help, const std::string&option, const std::string&default_value)
+{
+  // Parses the argument. Note that this supports both the given option (e.g. -device) and one with
+  // an extra dash in front (e.g. --device).
+  auto return_value = (default_value);
+  for (auto c=size_t{0}; c<arguments.size(); ++c) {
+    auto item = arguments[c];
+    if (item.compare("-"+option) == 0 || item.compare("--"+option) == 0) {
+      ++c;
+      return_value = arguments[c].c_str();
+      break;
+    }
+  }
+
+  // Updates the help message and returns
+  help += "    -"+option+" "+return_value+" ";
+  help += (return_value == default_value) ? "[=default]\n" : "\n";
+  return return_value;
+}
 // =================================================================================================
 
 // Returns only the precision argument
