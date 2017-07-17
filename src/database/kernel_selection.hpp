@@ -57,16 +57,6 @@ const Database::DatabaseEntry KernelSelectionSingle = {
         { "default",                                         { {"XGEMM_MIN_INDIRECT_SIZE",128*128*128} } },
       }
     },
-    { // ARM GPUs
-      kDeviceTypeGPU, "ARM", {
-        { "default",                                         { {"XGEMM_MIN_INDIRECT_SIZE",128*128*128} } },
-      }
-    },
-    { // ARM GPUs
-      kDeviceTypeGPU, "ARM", {
-        { "default",                                         { {"XGEMM_MIN_INDIRECT_SIZE",128*128*128} } },
-      }
-    },
     { // Default
       kDeviceTypeAll, "default", {
         { "default",                                         { {"XGEMM_MIN_INDIRECT_SIZE",512*512*512} } },
