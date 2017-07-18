@@ -181,7 +181,8 @@ size_t RunOverrideTestsDvdt(int argc, char *argv[], const bool silent, const std
 
     //Print Json
     std::stringstream tmp_filename;
-    tmp_filename << k_name << "_override_" << args.m << "_" << args.n << "_" << args.k << ".json";
+    tmp_filename << "clblast_xgemm_override.json";
+    // tmp_filename << k_name << "_override_" << args.m << "_" << args.n << "_" << args.k << ".json";
     std::string filename = tmp_filename.str();
     FILE * f = fopen(filename.c_str(),"w");
     fprintf(f, "{\n" );

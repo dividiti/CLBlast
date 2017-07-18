@@ -1711,12 +1711,7 @@ template StatusCode PUBLIC_API Spr2<half>(const Layout, const Triangle,
                 cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
                 cl_command_queue* queue, cl_event* event ){
         
-       // auto platform = Platform(size_t{0});
-       // auto device = Device(platform, size_t{0});
-       // auto context = Context(device);
-       // auto queue = Queue(context, device);
-       // auto event = nullptr;
-        const std::vector<std::string> v = getRoutinesSet();
+       const std::vector<std::string> v = getRoutinesSet();
         auto len = v.size();
         int flag = -1;
         for(auto i = 0; i < len ; i++)
@@ -1860,7 +1855,7 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
                    c_offset, c_ld, &flag);
 
     auto routine = Xgemm<T>(queue_cpp, event, routines_vett);
-    fprintf(stderr, "FLAG %d\n",flag );
+    // fprintf(stderr, "FLAG %d\n",flag );
     if(flag == -1)
     routine.DoGemm(layout, a_transpose, b_transpose,
                    m, n, k,

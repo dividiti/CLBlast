@@ -438,6 +438,7 @@ if(TESTS)
                                $<TARGET_PROPERTY:clblast,INTERFACE_INCLUDE_DIRECTORIES>
                                ${clblast_SOURCE_DIR} ${REF_INCLUDES})
     add_test(clblast_test_${MISC_TEST} clblast_test_${MISC_TEST})
+    install(TARGETS clblast_test_${MISC_TEST} DESTINATION bin)
   endforeach()
 
   # Adds 'alltests' target: runs all tests
