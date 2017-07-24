@@ -21,33 +21,33 @@
 #include "test/routines/level3/xgemm.hpp"
 
 namespace clblast {
-constexpr auto KWG = "KWG";
+constexpr auto kArgKwg = "KWG";
 
-constexpr auto KWI = "KWI";
+constexpr auto kArgKwi = "KWI";
 
-constexpr auto MDIMA = "MDIMA";
+constexpr auto kArgMdima = "MDIMA";
 
-constexpr auto MDIMC = "MDIMC";
+constexpr auto kArgMdimc = "MDIMC";
 
-constexpr auto MWG = "MWG";
+constexpr auto kArgMwg = "MWG";
 
-constexpr auto NDIMB = "NDIMB";
+constexpr auto kArgNdimb = "NDIMB";
 
-constexpr auto NDIMC = "NDIMC";
+constexpr auto kArgNdimc = "NDIMC";
 
-constexpr auto NWG = "NWG";
+constexpr auto kArgNwg = "NWG";
 
-constexpr auto SA = "SA";
+constexpr auto kArgSa = "SA";
 
-constexpr auto SB = "SB";
+constexpr auto kArgSb = "SB";
 
-constexpr auto STRM = "STRM";
+constexpr auto kArgStrm = "STRM";
 
-constexpr auto STRN = "STRN";
+constexpr auto kArgStrn = "STRN";
 
-constexpr auto VWM = "VWM";
+constexpr auto kArgVwm = "VWM";
 
-constexpr auto VWN = "VWN";
+constexpr auto kArgVwn = "VWN";
 
 constexpr auto KERNEL_NAME = "kernel_name";
 
@@ -65,10 +65,6 @@ size_t RunOverrideTestsDvdt(int argc, char *argv[], const bool silent, const std
   // Determines the test settings
   const auto kernel_name = std::string{"Xgemm"};
   const auto precision = PrecisionValue<T>();
-  const auto valid_settings = std::vector<std::unordered_map<std::string,size_t>>{
-    { {"KWG",16}, {"KWI",2}, {"MDIMA",4}, {"MDIMC",4}, {"MWG",16}, {"NDIMB",4}, {"NDIMC",4}, {"NWG",16}, {"SA",0}, {"SB",0}, {"STRM",0}, {"STRN",0}, {"VWM",1}, {"VWN",1} },
-    { {"KWG",32}, {"KWI",2}, {"MDIMA",4}, {"MDIMC",4}, {"MWG",32}, {"NDIMB",4}, {"NDIMC",4}, {"NWG",32}, {"SA",0}, {"SB",0}, {"STRM",0}, {"STRN",0}, {"VWM",1}, {"VWN",1} },
-  };
   
 
   // Retrieves the arguments
@@ -92,26 +88,30 @@ size_t RunOverrideTestsDvdt(int argc, char *argv[], const bool silent, const std
   args.beta  = GetArgument(arguments, help, kArgBeta, GetScalar<T>());
   
 
-  auto kwg = GetArgument(arguments, help, KWG, size_t{32});
-  auto kwi = GetArgument(arguments, help, KWI, size_t{2});
-  auto mdima = GetArgument(arguments, help, MDIMA, size_t{8});
-  auto mdimc = GetArgument(arguments, help, MDIMC, size_t{8});
-  auto mwg = GetArgument(arguments, help, MWG, size_t{64});
-  auto ndimb = GetArgument(arguments, help, NDIMB, size_t{16});
-  auto ndimc = GetArgument(arguments, help, NDIMC, size_t{16});
-  auto nwg = GetArgument(arguments, help, NWG, size_t{64});
-  auto sa = GetArgument(arguments, help, SA, size_t{1});
-  auto sb = GetArgument(arguments, help, SB, size_t{1});
-  auto strm = GetArgument(arguments, help, STRM, size_t{0});
-  auto strn = GetArgument(arguments, help, STRN, size_t{0});
-  auto vwm = GetArgument(arguments, help, VWM, size_t{4});
-  auto vwn = GetArgument(arguments, help, VWN, size_t{4});
+  auto kwg = GetArgument(arguments, help, kArgKwg, size_t{32});
+  auto kwi = GetArgument(arguments, help, kArgKwi, size_t{2});
+  auto mdima = GetArgument(arguments, help, kArgMdima, size_t{8});
+  auto mdimc = GetArgument(arguments, help, kArgMdimc, size_t{8});
+  auto mwg = GetArgument(arguments, help, kArgMwg, size_t{64});
+  auto ndimb = GetArgument(arguments, help, kArgNdimb, size_t{16});
+  auto ndimc = GetArgument(arguments, help, kArgNdimc, size_t{16});
+  auto nwg = GetArgument(arguments, help, kArgNwg, size_t{64});
+  auto sa = GetArgument(arguments, help, kArgSa, size_t{1});
+  auto sb = GetArgument(arguments, help, kArgSb, size_t{1});
+  auto strm = GetArgument(arguments, help, kArgStrm, size_t{0});
+  auto strn = GetArgument(arguments, help, kArgStrn, size_t{0});
+  auto vwm = GetArgument(arguments, help, kArgVwm, size_t{4});
+  auto vwn = GetArgument(arguments, help, kArgVwn, size_t{4});
   auto num_runs = GetArgument(arguments, help, kArgNumRuns, size_t{5});
   std::string k_name = GetStringArgument(arguments,help, KERNEL_NAME, "Xgemm");
   
-  //TODOOOOOO
+  
   const auto cmdline_settings = std::unordered_map<std::string,size_t>{
-   {"KWG",kwg}, {"KWI",kwi}, {"MDIMA",mdima}, {"MDIMC",mdimc}, {"MWG",mwg}, {"NDIMB",ndimb}, {"NDIMC",ndimc}, {"NWG",nwg}, {"SA",sa}, {"SB",sb}, {"STRM",strm}, {"STRN",strn}, {"VWM",vwm}, {"VWN",vwn}  };
+   {kArgKwg, kwg}, {kArgKwi, kwi}, {kArgMdima, mdima}, {kArgMdimc, mdimc},
+   {kArgMwg, mwg}, {kArgNdimb, ndimb}, {kArgNdimc, ndimc}, {kArgNwg, nwg},
+   {kArgSa, sa}, {kArgSb, sb}, {kArgStrm, strm}, {kArgStrn, strn}, {kArgVwm, vwm}, 
+   {kArgVwn,vwn}  
+ };
   // Prints the help message (command-line arguments)
   if (!silent) { fprintf(stdout, "\n* %s\n", help.c_str()); }
   
@@ -151,7 +151,6 @@ size_t RunOverrideTestsDvdt(int argc, char *argv[], const bool silent, const std
     // Overrides the parameters
   const auto status = OverrideParameters(device(), kernel_name, precision, cmdline_settings);
   if (status != StatusCode::kSuccess) { errors++; fprintf(stderr, "ERROR : %d - %zu\n",status,errors ); } // error shouldn't occur
-  fprintf(stderr, "AFTER\n");
 
 
   const auto status_after = example_routine.RunRoutine(args, buffers, queue);
@@ -182,16 +181,22 @@ size_t RunOverrideTestsDvdt(int argc, char *argv[], const bool silent, const std
     //Print Json
     std::stringstream tmp_filename;
     tmp_filename << "clblast_xgemm_override.json";
-    // tmp_filename << k_name << "_override_" << args.m << "_" << args.n << "_" << args.k << ".json";
     std::string filename = tmp_filename.str();
     FILE * f = fopen(filename.c_str(),"w");
     fprintf(f, "{\n" );
-    fprintf(f, "\"m\" : %u,\n", args.m);
-    fprintf(f, "\"n\" : %u,\n", args.n);
-    fprintf(f, "\"k\" : %u,\n", args.k);
-    fprintf(f, "\"GFLOPS\" : %lf,\n", gflops);
-    fprintf(f, "\"Time(ms)\" : %.4lf\n", elapsed_time);
+    fprintf(f, "  \"m\" : %u,\n", args.m);
+    fprintf(f, "  \"n\" : %u,\n", args.n);
+    fprintf(f, "  \"k\" : %u,\n", args.k);
+    fprintf(f, "  \"GFLOPS\" : %lf,\n", gflops);
+    fprintf(f, "  \"Time(ms)\" : %.4lf,\n", elapsed_time);
+    fprintf(f, "  \"kernel_family\" : \"%s\",\n", k_name.c_str());
+    fprintf(f, "  \"device\": \"%s\",\n", device.Name().c_str());
+    fprintf(f, "  \"device_vendor\": \"%s\",\n", device.Vendor().c_str());
+    fprintf(f, "  \"device_type\": \"%s\",\n", device.Type().c_str());
+    fprintf(f, "  \"device_core_clock\": \"%zu\",\n", device.CoreClock());
+    fprintf(f, "  \"device_compute_units\": \"%zu\"\n", device.ComputeUnits());
     fprintf(f, "}" );
+
     fclose(f);
 
   }
