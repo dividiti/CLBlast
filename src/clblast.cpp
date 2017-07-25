@@ -1702,90 +1702,6 @@ template StatusCode PUBLIC_API Spr2<half>(const Layout, const Triangle,
 // =================================================================================================
 // BLAS level-3 (matrix-matrix) routines
 // =================================================================================================
- template <typename T> StatusCode PUBLIC_API testConf(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
-                const size_t m, const size_t n, const size_t k,
-                const T alpha,
-                const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
-                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld,
-                const T beta,
-                cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
-                cl_command_queue* queue, cl_event* event ){
-        
-       const std::vector<std::string> v = getRoutinesSet();
-        auto len = v.size();
-        int flag = -1;
-        for(auto i = 0; i < len ; i++)
-        {
-            const std::vector<std::string>  routines_vett = updateRoutinesVett(v[i], &flag);
-            try {
-                auto queue_cpp = Queue(*queue);
-               
-
-                auto routine = Xgemm<T>(queue_cpp, event, routines_vett);
-                auto start_time = std::chrono::steady_clock::now();
-                routine.DoGemm(layout, a_transpose, b_transpose,
-                               m, n, k,
-                               alpha,
-                               Buffer<T>(a_buffer), a_offset, a_ld,
-                               Buffer<T>(b_buffer), b_offset, b_ld,
-                               beta,
-                               Buffer<T>(c_buffer), c_offset, c_ld,flag);
-	      auto elapsed_time = std::chrono::steady_clock::now() - start_time;
-              auto timing = std::chrono::duration<double,std::milli>(elapsed_time).count();
-	      auto flops =  ((unsigned long long) m * n * k * 2)  ;
-              auto gflops = (timing != 0.0) ? (flops*1e-6)/timing : 0; 
-              fprintf(stderr, "[%s] : time : %9.2lf - GFLOPS : %9.1lf\n",v[i].c_str(), timing, gflops);
-              } catch (...) { return DispatchException(); }
-        
-        }
-        return StatusCode::kSuccess;
-      }
-        template StatusCode PUBLIC_API testConf<float>(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
-                const size_t m, const size_t n, const size_t k,
-                const float alpha,
-                const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
-                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld,
-                const float beta,
-                cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
-                cl_command_queue* queue, cl_event* event);
-         
-        template StatusCode PUBLIC_API testConf<double>(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
-                const size_t m, const size_t n, const size_t k,
-                const double alpha,
-                const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
-                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld,
-                const double beta,
-                cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
-                cl_command_queue* queue, cl_event* event);
-
-          template StatusCode PUBLIC_API testConf<float2>(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
-                const size_t m, const size_t n, const size_t k,
-                const float2 alpha,
-                const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
-                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld,
-                const float2 beta,
-                cl_mem c_buffer, const size_t c_offset, const size_t c_ld, 
-                cl_command_queue* queue, cl_event* event);
-
-
-           template StatusCode PUBLIC_API testConf<double2>(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
-                const size_t m, const size_t n, const size_t k,
-                const double2 alpha,
-                const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
-                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld,
-                const double2 beta,
-                cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
-                cl_command_queue* queue, cl_event* event);
-
-            template StatusCode PUBLIC_API testConf<half>(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
-                const size_t m, const size_t n, const size_t k,
-                const half alpha,
-                const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
-                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld,
-                const half beta,
-                cl_mem c_buffer, const size_t c_offset, const size_t c_ld, 
-                cl_command_queue* queue, cl_event* event); 
-
 template <typename T>
 StatusCode TestGemm(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
                 const size_t m, const size_t n, const size_t k,
@@ -1796,39 +1712,60 @@ StatusCode TestGemm(const Layout layout, const Transpose a_transpose, const Tran
                 cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
                 cl_command_queue* queue, cl_event* event) {
 
-		return testConf<T>(layout, a_transpose, b_transpose, m, n, k, 
-			alpha, a_buffer, a_offset, a_ld, b_buffer, b_offset, b_ld,
-			beta, c_buffer, c_offset, c_ld, queue, event);
+		try {
+    auto queue_cpp = Queue(*queue);
+    int flag = 0;
+    const std::vector<std::string> routines_vett = 
+  GetConf<T>(layout, a_transpose, b_transpose,
+                   m, n,k, 
+                   alpha, a_offset, a_ld,
+                   b_offset, b_ld, beta,
+                   c_offset, c_ld, &flag);
+
+    auto routine = Xgemm<T>(queue_cpp, event, routines_vett);
+    // fprintf(stderr, "FLAG %d\n",flag );
+    
+    routine.DoGemm(layout, a_transpose, b_transpose,
+                   m, n, k,
+                   alpha,
+                   Buffer<T>(a_buffer), a_offset, a_ld,
+                   Buffer<T>(b_buffer), b_offset, b_ld,
+                   beta,
+                   Buffer<T>(c_buffer), c_offset, c_ld,flag);
+
+    return StatusCode::kSuccess;
+  } catch (...) { return DispatchException(); }
 }
-template StatusCode TestGemm<float>(const Layout layout, const Transpose a_transpose,
+
+template StatusCode PUBLIC_API TestGemm<float>(const Layout layout, const Transpose a_transpose,
                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                const float alpha, const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld, const float beta,
 	       cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
                cl_command_queue* queue, cl_event* event); 
 
-template StatusCode TestGemm<double>(const Layout layout, const Transpose a_transpose,
+template StatusCode PUBLIC_API TestGemm<double>(const Layout layout, const Transpose a_transpose,
                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                const double alpha, const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld, const double beta,
 	       cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
                cl_command_queue* queue, cl_event* event); 
 
-template StatusCode TestGemm<float2>(const Layout layout, const Transpose a_transpose,
+template StatusCode PUBLIC_API TestGemm<float2>(const Layout layout, const Transpose a_transpose,
                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                const float2 alpha, const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld, const float2 beta,
 	       cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
                cl_command_queue* queue, cl_event* event); 
 
-template StatusCode TestGemm<double2>(const Layout layout, const Transpose a_transpose,
+template StatusCode PUBLIC_API TestGemm<double2>(const Layout layout, const Transpose a_transpose,
                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                const double2 alpha, const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld, const double2 beta,
 	       cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
                cl_command_queue* queue, cl_event* event); 
 
-template StatusCode TestGemm<half>(const Layout layout, const Transpose a_transpose,
+template StatusCode PUBLIC_API TestGemm<half>(const Layout layout, const Transpose a_transpose,
                const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
                const half alpha, const cl_mem a_buffer, const size_t a_offset, const size_t a_ld,
                const cl_mem b_buffer, const size_t b_offset, const size_t b_ld, const half beta,

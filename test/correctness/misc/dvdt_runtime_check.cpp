@@ -18,7 +18,7 @@
 #include <chrono>
 #include <limits>
 #include "utilities/utilities.hpp"
-#include "test/routines/level3/xgemm.hpp"
+#include "test/routines/level3/test_dvdt.hpp"
 
 namespace clblast {
 constexpr auto kArgKwg = "KWG";
@@ -59,7 +59,7 @@ size_t RunOverrideTestsDvdt(int argc, char *argv[], const bool silent, const std
 
   auto errors = size_t{0};
   auto passed = size_t{0};
-  auto example_routine = TestXgemm<T>();
+  auto example_routine = TestDvdt<T>();
   constexpr auto kSeed = 42; // fixed seed for reproducibility
 
   // Determines the test settings
