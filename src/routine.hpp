@@ -43,6 +43,11 @@ class Routine {
                    const std::vector<Database::DatabaseEntry> &userDatabase,
                    std::initializer_list<const char *> source);
 
+  explicit Routine(Queue &queue, EventPointer event, const std::string &name,
+                   const std::vector<std::string> &routines, const Precision precision,
+                   const std::vector<Database::DatabaseEntry> &userDatabase,
+                   std::vector<const char *> source);
+
   // List of kernel-routine look-ups
   static const std::vector<std::string> routines_axpy;
   static const std::vector<std::string> routines_dot;

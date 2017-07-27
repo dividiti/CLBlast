@@ -1809,7 +1809,7 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
                    Buffer<T>(a_buffer), a_offset, a_ld,
                    Buffer<T>(b_buffer), b_offset, b_ld,
                    beta,
-                   Buffer<T>(c_buffer), c_offset, c_ld,flag);
+                   Buffer<T>(c_buffer), c_offset, c_ld,flag, k_info.k_name);
 
     return StatusCode::kSuccess;
   } catch (...) { return DispatchException(); }
