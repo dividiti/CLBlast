@@ -1712,29 +1712,23 @@ StatusCode TestGemm(const Layout layout, const Transpose a_transpose, const Tran
                 cl_mem c_buffer, const size_t c_offset, const size_t c_ld,
                 cl_command_queue* queue, cl_event* event) {
 
-		// try {
-  //   auto queue_cpp = Queue(*queue);
-  //   int flag = 0;
-  //   const std::vector<std::string> routines_vett = 
-  // GetConf<T>(layout, a_transpose, b_transpose,
-  //                  m, n,k, 
-  //                  alpha, a_offset, a_ld,
-  //                  b_offset, b_ld, beta,
-  //                  c_offset, c_ld, &flag);
-
-  //   auto routine = Xgemm<T>(queue_cpp, event, routines_vett);
-  //   // fprintf(stderr, "FLAG %d\n",flag );
+		try {
+    auto queue_cpp = Queue(*queue);
+    int flag = 0;
+ 
+    auto routine = Xgemm<T>(queue_cpp, event);
+    // fprintf(stderr, "FLAG %d\n",flag );
     
-  //   routine.DoGemm(layout, a_transpose, b_transpose,
-  //                  m, n, k,
-  //                  alpha,
-  //                  Buffer<T>(a_buffer), a_offset, a_ld,
-  //                  Buffer<T>(b_buffer), b_offset, b_ld,
-  //                  beta,
-  //                  Buffer<T>(c_buffer), c_offset, c_ld,flag);
+    routine.DoGemm(layout, a_transpose, b_transpose,
+                   m, n, k,
+                   alpha,
+                   Buffer<T>(a_buffer), a_offset, a_ld,
+                   Buffer<T>(b_buffer), b_offset, b_ld,
+                   beta,
+                   Buffer<T>(c_buffer), c_offset, c_ld,flag);
 
     return StatusCode::kSuccess;
-  // } catch (...) { return DispatchException(); }
+  } catch (...) { return DispatchException(); }
 }
 
 template StatusCode PUBLIC_API TestGemm<float>(const Layout layout, const Transpose a_transpose,
