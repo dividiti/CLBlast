@@ -67,6 +67,12 @@ Xgemm<T>::Xgemm(Queue &queue, EventPointer event, const std::vector<std::string>
     #include "../../kernels/level3/xgemm_part3.opencl"
     }) {
 }
+template <typename T>
+Xgemm<T>::Xgemm(Queue &queue, EventPointer event, const std::vector<std::string> &routines, 
+  std::initializer_list<const char *> &sources, const std::string &name):
+    Routine(queue, event, name,routines,
+            PrecisionValue<T>(), {},  sources){
+}
 // =================================================================================================
 
 // The main routine

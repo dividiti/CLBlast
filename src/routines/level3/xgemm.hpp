@@ -27,6 +27,7 @@ class Xgemm: public Routine {
   // Constructor
   Xgemm(Queue &queue, EventPointer event, const std::string &name = "GEMM");
   Xgemm(Queue &queue, EventPointer event, const std::vector<std::string> &routines, const std::string &name = "GEMM");
+  Xgemm(Queue &queue, EventPointer event, const std::vector<std::string> &routines,std::initializer_list<const char *> &sources, const std::string &name = "GEMM");
   // Templated-precision implementation of the routine
   void DoGemm(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
               const size_t m, const size_t n, const size_t k,
@@ -55,7 +56,18 @@ class Xgemm: public Routine {
                     const size_t a_one, const size_t a_two, const bool a_want_rotated,
                     const size_t b_one, const size_t b_two, const bool b_want_rotated,
                     const size_t c_one, const size_t c_two, const bool c_want_rotated);
-
+// Indirect version of GEMM (with pre and post-processing kernels)
+  void GemmIndirect(const size_t m, const size_t n, const size_t k,
+                    const T alpha,
+                    const Buffer<T> &a_buffer, const size_t a_offset, const size_t a_ld,
+                    const Buffer<T> &b_buffer, const size_t b_offset, const size_t b_ld,
+                    const T beta,
+                    const Buffer<T> &c_buffer, const size_t c_offset, const size_t c_ld,
+                    const bool a_do_transpose, const bool b_do_transpose, const bool c_do_transpose,
+                    const bool a_conjugate, const bool b_conjugate,
+                    const size_t a_one, const size_t a_two, const bool a_want_rotated,
+                    const size_t b_one, const size_t b_two, const bool b_want_rotated,
+                    const size_t c_one, const size_t c_two, const bool c_want_rotated, std::string k_name);
   // Direct version of GEMM (no pre and post-processing kernels)
   void GemmDirect(const size_t m, const size_t n, const size_t k,
                   const T alpha,
