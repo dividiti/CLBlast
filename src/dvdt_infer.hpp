@@ -9,48 +9,9 @@ namespace clblast{
     
      struct dvdtKernelInfo{
         std::vector<std::string> routines_vett;
-        std::vector<const char *> sources;
         std::string k_name;
     };
-    std::vector<const char *> getSources(int m ) {
-
-        static const char * s1 = {
-        #include "./kernels/level3/level3.opencl"
-        #include "./kernels/level3/copy_fast.opencl"
-        #include "./kernels/level3/copy_pad.opencl"
-        #include "./kernels/level3/transpose_fast.opencl"
-        #include "./kernels/level3/transpose_pad.opencl"
-        #include "./kernels/level3/convert_symmetric.opencl"
-        #include "./kernels/level3/convert_triangular.opencl"
-        #include "./kernels/level3/convert_hermitian.opencl"
-        };
-
-        static const char * s2 = {
-        #include "./kernels/level3/xgemm_direct_part1.opencl"
-        #include "./kernels/level3/xgemm_direct_part2.opencl"
-        #include "./kernels/level3/xgemm_direct_part3.opencl"
-        };
-
-        static const char * s3 = {
-        #include "./kernels/level3/xgemm_part1.opencl"
-        #include "./kernels/level3/xgemm_part2.opencl"
-        #include "./kernels/level3/xgemm_part3.opencl"
-        };
-
-        static const char * s4 = {
-        #include "./kernels/level3/xgemm_part1.opencl"
-        #include "./kernels/level3/xgemm_part2.opencl"
-        #include "./kernels/level3/xgemm2_part3.opencl"
-        };
-
-
-        if ( m == 2050)
-                return std::vector<const char *> {s1,s2,s4};
-
-        return std::vector<const char *> {s1,s2,s3};
-    }
-
-
+    
 	template <typename T> 
     struct dvdtKernelInfo GetConf(const Layout layout, const Transpose a_transpose, 
                     const Transpose b_transpose, const size_t m, const size_t n, const size_t k,
@@ -66,7 +27,6 @@ namespace clblast{
       *flag=-1;
       struct dvdtKernelInfo k_info;
       k_info.routines_vett = routines_vett;
-      k_info.sources = getSources(*flag);
       k_info.k_name = "Xgemm";
       return k_info;
     }

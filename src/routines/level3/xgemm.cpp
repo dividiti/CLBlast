@@ -67,12 +67,7 @@ Xgemm<T>::Xgemm(Queue &queue, EventPointer event, const std::vector<std::string>
     #include "../../kernels/level3/xgemm_part3.opencl"
     }) {
 }
-template <typename T>
-Xgemm<T>::Xgemm(Queue &queue, EventPointer event, const std::vector<std::string> &routines, 
-  std::vector<const char *> &sources, const std::string &name):
-    Routine(queue, event, name,routines,
-            PrecisionValue<T>(), {},  sources){
-}
+
 // =================================================================================================
 
 // The main routine
@@ -160,7 +155,7 @@ void Xgemm<T>::DoGemm(const Layout layout,
                       const Buffer<T> &b_buffer, const size_t b_offset, const size_t b_ld,
                       const T beta,
                       const Buffer<T> &c_buffer, const size_t c_offset, const size_t c_ld, 
-                      int flag, const std::string k_name) {
+                      int flag){
 
   // Makes sure all dimensions are larger than zero
   if ((m == 0) || (n == 0) || (k == 0)) { throw BLASError(StatusCode::kInvalidDimension); }
@@ -222,7 +217,7 @@ void Xgemm<T>::DoGemm(const Layout layout,
                  a_do_transpose, b_do_transpose, c_do_transpose, a_conjugate, b_conjugate,
                  a_one, a_two, a_want_rotated,
                  b_one, b_two, b_want_rotated,
-                 c_one, c_two, c_want_rotated, k_name);
+                 c_one, c_two, c_want_rotated);
   }
 }
 
@@ -396,128 +391,6 @@ void Xgemm<T>::GemmDirect(const size_t m, const size_t n, const size_t k,
   // Launches the kernel
   RunKernel(kernel, queue_, device_, global, local, event_);
 }
-
-
-// =================================================================================================
-
-// The indirect version of GEMM. This uses the faster but non-general kernel. It has specific
-// requirements, but several pre and post-processing kernels take care of those. However, the
-// overhead of these extra kernels might not be ideal for certain devices/arguments.
-template <typename T>
-void Xgemm<T>::GemmIndirect(const size_t m, const size_t n, const size_t k,
-                            const T alpha,
-                            const Buffer<T> &a_buffer, const size_t a_offset, const size_t a_ld,
-                            const Buffer<T> &b_buffer, const size_t b_offset, const size_t b_ld,
-                            const T beta,
-                            const Buffer<T> &c_buffer, const size_t c_offset, const size_t c_ld,
-                            const bool a_do_transpose, const bool b_do_transpose, const bool c_do_transpose,
-                            const bool a_conjugate, const bool b_conjugate,
-                            const size_t a_one, const size_t a_two, const bool a_want_rotated,
-                            const size_t b_one, const size_t b_two, const bool b_want_rotated,
-                            const size_t c_one, const size_t c_two, const bool c_want_rotated,
-                            const std::string k_name) {
-  // Calculates the ceiled versions of m, n, and k
-  const auto m_ceiled = Ceil(m, db_["MWG"]);
-  const auto n_ceiled = Ceil(n, db_["NWG"]);
-  const auto k_ceiled = Ceil(k, db_["KWG"]);
-
-  // Computes the first and second "internal" (ceiled) dimensions of the 3 matrices taking into account
-  // whether the matrices need to be rotated or not for the kernel.
-  const auto a_one_i = (a_want_rotated) ? k_ceiled : m_ceiled;
-  const auto a_two_i = (a_want_rotated) ? m_ceiled : k_ceiled;
-  const auto b_one_i = (b_want_rotated) ? n_ceiled : k_ceiled;
-  const auto b_two_i = (b_want_rotated) ? k_ceiled : n_ceiled;
-  const auto c_one_i = (c_want_rotated) ? n_ceiled : m_ceiled;
-  const auto c_two_i = (c_want_rotated) ? m_ceiled : n_ceiled;
-
-  // Determines whether or not temporary matrices are needed
-  auto a_no_temp = a_one == a_one_i && a_two == a_two_i && a_ld == a_one && a_offset == 0 &&
-                   a_do_transpose == false && a_conjugate == false;
-  auto b_no_temp = b_one == b_one_i && b_two == b_two_i && b_ld == b_one && b_offset == 0 &&
-                   b_do_transpose == false && b_conjugate == false;
-  auto c_no_temp = c_one == c_one_i && c_two == c_two_i && c_ld == c_one && c_offset == 0 &&
-                   c_do_transpose == false;
-
-  // Creates the temporary matrices
-  const auto a_temp = (a_no_temp) ? a_buffer : Buffer<T>(context_, a_one_i*a_two_i);
-  const auto b_temp = (b_no_temp) ? b_buffer : Buffer<T>(context_, b_one_i*b_two_i);
-  const auto c_temp = (c_no_temp) ? c_buffer : Buffer<T>(context_, c_one_i*c_two_i);
-
-  // Events of all kernels (including pre/post processing kernels)
-  auto eventWaitList = std::vector<Event>();
-  auto emptyEventList = std::vector<Event>();
-
-  // Runs the pre-processing kernel for matrix A. This transposes the matrix, but also pads zeros
-  // to fill it up until it reaches a certain multiple of size (kernel parameter dependent). In
-  // case nothing has to be done, these kernels can be skipped.
-  if (!a_no_temp) {
-    auto eventProcessA = Event();
-    PadCopyTransposeMatrix(queue_, device_, db_, eventProcessA.pointer(), emptyEventList,
-                           a_one, a_two, a_ld, a_offset, a_buffer,
-                           a_one_i, a_two_i, a_one_i, 0, a_temp,
-                           ConstantOne<T>(), program_,
-                           true, a_do_transpose, a_conjugate);
-    eventWaitList.push_back(eventProcessA);
-  }
-
-  // As above, but now for matrix B
-  if (!b_no_temp) {
-    auto eventProcessB = Event();
-    PadCopyTransposeMatrix(queue_, device_, db_, eventProcessB.pointer(), emptyEventList,
-                           b_one, b_two, b_ld, b_offset, b_buffer,
-                           b_one_i, b_two_i, b_one_i, 0, b_temp,
-                           ConstantOne<T>(), program_,
-                           true, b_do_transpose, b_conjugate);
-    eventWaitList.push_back(eventProcessB);
-  }
-
-  // As above, but now for matrix C. This is only necessary if C is used both as input and output.
-  if (!c_no_temp && beta != static_cast<T>(0)) {
-    auto eventProcessC = Event();
-    PadCopyTransposeMatrix(queue_, device_, db_, eventProcessC.pointer(), emptyEventList,
-                           c_one, c_two, c_ld, c_offset, c_buffer,
-                           c_one_i, c_two_i, c_one_i, 0, c_temp,
-                           ConstantOne<T>(), program_,
-                           true, c_do_transpose, false);
-    eventWaitList.push_back(eventProcessC);
-  }
-
-  // Retrieves the Xgemm kernel from the compiled binary
-  auto kernel = Kernel(program_, k_name);
-
-  // Sets the kernel arguments
-  kernel.SetArgument(0, static_cast<int>(m_ceiled));
-  kernel.SetArgument(1, static_cast<int>(n_ceiled));
-  kernel.SetArgument(2, static_cast<int>(k_ceiled));
-  kernel.SetArgument(3, GetRealArg(alpha));
-  kernel.SetArgument(4, GetRealArg(beta));
-  kernel.SetArgument(5, a_temp());
-  kernel.SetArgument(6, b_temp());
-  kernel.SetArgument(7, c_temp());
-
-  // Computes the global and local thread sizes
-  const auto global = std::vector<size_t>{
-    (c_one_i * db_["MDIMC"]) / db_["MWG"],
-    (c_two_i * db_["NDIMC"]) / db_["NWG"]
-  };
-  const auto local = std::vector<size_t>{db_["MDIMC"], db_["NDIMC"]};
-
-  // Launches the kernel
-  auto eventKernel = Event();
-  auto eventPointer = (!c_no_temp) ? eventKernel.pointer() : event_;
-  RunKernel(kernel, queue_, device_, global, local, eventPointer, eventWaitList);
-
-  // Runs the post-processing kernel if needed
-  if (!c_no_temp) {
-    eventWaitList.push_back(eventKernel);
-    PadCopyTransposeMatrix(queue_, device_, db_, event_, eventWaitList,
-                           c_one_i, c_two_i, c_one_i, 0, c_temp,
-                           c_one, c_two, c_ld, c_offset, c_buffer,
-                           ConstantOne<T>(), program_,
-                           false, c_do_transpose, false);
-  }
-}
-
 // =================================================================================================
 
 // Compiles the templated class

@@ -66,25 +66,7 @@ Routine::Routine(Queue &queue, EventPointer event, const std::string &name,
   InitDatabase(userDatabase);
   InitProgram(source);
 }
-// The constructor does all heavy work, errors are returned as exceptions
-Routine::Routine(Queue &queue, EventPointer event, const std::string &name,
-                 const std::vector<std::string> &kernel_names, const Precision precision,
-                 const std::vector<Database::DatabaseEntry> &userDatabase,
-                 std::vector<const char *> source):
-    precision_(precision),
-    routine_name_(name),
-    kernel_names_(kernel_names),
-    queue_(queue),
-    event_(event),
-    context_(queue_.GetContext()),
-    device_(queue_.GetDevice()),
-    device_name_(device_.Name()),
-    db_(kernel_names) {
 
-  InitDatabase(userDatabase);
-  std::initializer_list<const char * > source_list = {source[0], source[1], source[2]};
-  InitProgram(source_list);
-}
 void Routine::InitDatabase(const std::vector<Database::DatabaseEntry> &userDatabase) {
   for (const auto &kernel_name : kernel_names_) {
 

@@ -27,8 +27,7 @@ class Xgemm: public Routine {
   // Constructor
   Xgemm(Queue &queue, EventPointer event, const std::string &name = "GEMM");
   Xgemm(Queue &queue, EventPointer event, const std::vector<std::string> &routines, const std::string &name = "GEMM");
-  Xgemm(Queue &queue, EventPointer event, const std::vector<std::string> &routines,std::vector<const char *> &sources, const std::string &name = "GEMM");
-  // Templated-precision implementation of the routine
+   // Templated-precision implementation of the routine
   void DoGemm(const Layout layout, const Transpose a_transpose, const Transpose b_transpose,
               const size_t m, const size_t n, const size_t k,
               const T alpha,
@@ -43,8 +42,7 @@ class Xgemm: public Routine {
               const Buffer<T> &a_buffer, const size_t a_offset, const size_t a_ld,
               const Buffer<T> &b_buffer, const size_t b_offset, const size_t b_ld,
               const T beta,
-              const Buffer<T> &c_buffer, const size_t c_offset, const size_t c_ld, int flag,
-              const std::string k_name);
+              const Buffer<T> &c_buffer, const size_t c_offset, const size_t c_ld, int flag);
   // Indirect version of GEMM (with pre and post-processing kernels)
   void GemmIndirect(const size_t m, const size_t n, const size_t k,
                     const T alpha,

@@ -1784,15 +1784,15 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
   try {
     auto queue_cpp = Queue(*queue);
     int flag = -1;
-    // const std::vector<std::string> routines_vett = 
+   
     struct dvdtKernelInfo k_info=
-	GetConf<T>(layout, a_transpose, b_transpose,
+	  GetConf<T>(layout, a_transpose, b_transpose,
                    m, n,k, 
                    alpha, a_offset, a_ld,
                    b_offset, b_ld, beta,
                    c_offset, c_ld, &flag);
 
-    auto routine = Xgemm<T>(queue_cpp, event, k_info.routines_vett, k_info.sources);
+    auto routine = Xgemm<T>(queue_cpp, event, k_info.routines_vett, k_info.k_name);
     // fprintf(stderr, "FLAG %d\n",flag );
     if(flag == -1)
     routine.DoGemm(layout, a_transpose, b_transpose,
@@ -1809,7 +1809,7 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
                    Buffer<T>(a_buffer), a_offset, a_ld,
                    Buffer<T>(b_buffer), b_offset, b_ld,
                    beta,
-                   Buffer<T>(c_buffer), c_offset, c_ld,flag, k_info.k_name);
+                   Buffer<T>(c_buffer), c_offset, c_ld,flag);
 
     return StatusCode::kSuccess;
   } catch (...) { return DispatchException(); }
