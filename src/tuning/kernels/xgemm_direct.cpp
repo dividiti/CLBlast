@@ -70,16 +70,16 @@ class TuneXgemmDirect {
   // Sets the tuning parameters and their possible values
   static void SetParameters(cltune::Tuner &tuner, const size_t id) {
     if (V==1) { // limited subset of tuning parameters - but explorable exhaustively
-      tuner.AddParameter(id, "WGD", {8, 16, 32});
-      tuner.AddParameter(id, "MDIMCD", {8, 16, 32});
-      tuner.AddParameter(id, "NDIMCD", {8, 16, 32});
-      tuner.AddParameter(id, "MDIMAD", {8, 16, 32});
-      tuner.AddParameter(id, "NDIMBD", {8, 16, 32});
-      tuner.AddParameter(id, "KWID", {2});
-      tuner.AddParameter(id, "VWMD", {1, 2, 4, 8});
-      tuner.AddParameter(id, "VWND", {1, 2, 4, 8});
-      tuner.AddParameter(id, "PADA", {1});
-      tuner.AddParameter(id, "PADB", {1});
+      tuner.AddParameter(id, "WGD", {8, 16, 32});//64,128
+      tuner.AddParameter(id, "MDIMCD", {4, 8, 16});
+      tuner.AddParameter(id, "NDIMCD", {4, 8, 16});
+      tuner.AddParameter(id, "MDIMAD", {4, 8, 16});
+      tuner.AddParameter(id, "NDIMBD", {4, 8, 16});
+      tuner.AddParameter(id, "KWID", {1, 2, 4}); //1,4
+      tuner.AddParameter(id, "VWMD", {1, 2, 4});
+      tuner.AddParameter(id, "VWND", {1, 2, 4});
+      tuner.AddParameter(id, "PADA", {1});//0
+      tuner.AddParameter(id, "PADB", {1});//0
     } // a lot more tuning parameters - has to be sampled randomly, too much to test all
     else {
       tuner.AddParameter(id, "WGD", {8, 16, 32, 64, 128});

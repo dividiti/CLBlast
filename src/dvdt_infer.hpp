@@ -2,7 +2,7 @@
 #define DVDT_INFER_H
 
 #include <vector>
-#include <initializer_list>
+#include <chrono>
 #include "clblast.h"
 
 namespace clblast{

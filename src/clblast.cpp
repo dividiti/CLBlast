@@ -1778,7 +1778,11 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
   try {
     auto queue_cpp = Queue(*queue);
     int flag = -1;
-   
+
+    //Init and start the timer for evaluating DT Overhead
+    auto elapsed_time = std::numeric_limits<float>::max();
+    const auto start_time = std::chrono::steady_clock::now();
+    
     struct dvdtKernelInfo k_info=
 	  GetConf<T>(layout, a_transpose, b_transpose,
                    m, n,k, 
@@ -1786,6 +1790,15 @@ StatusCode Gemm(const Layout layout, const Transpose a_transpose, const Transpos
                    b_offset, b_ld, beta,
                    c_offset, c_ld, &flag);
 
+    //Stop the timer and calculate the elapsed time
+    auto cpu_timer = std::chrono::steady_clock::now() - start_time;
+    const auto cpu_timing = std::chrono::duration<float,std::milli>(cpu_timer).count();
+    elapsed_time = std::min(elapsed_time, cpu_timing);
+    
+    #ifdef DVDT_VERBOSE
+      fprintf(stderr, "DT-Overhead : %.1lf(ms)\n", elapsed_time );
+    #endif
+    
     auto routine = Xgemm<T>(queue_cpp, event, k_info.routines_vett, k_info.k_name);
     // fprintf(stderr, "FLAG %d\n",flag );
     if(flag == -1)
