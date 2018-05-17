@@ -8,8 +8,8 @@
 import ast
 from collections import defaultdict
 
-import clblast
-import bests
+from . import clblast
+from . import bests
 
 
 def set_default_device(section):

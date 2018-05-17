@@ -8,7 +8,7 @@
 import itertools
 from operator import itemgetter
 
-import clblast
+from . import clblast
 
 
 def length(database):
